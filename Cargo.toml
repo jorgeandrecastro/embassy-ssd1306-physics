@@ -1,0 +1,23 @@
+[package]
+name          = "embassy-ssd1306-physics"
+version       = "0.2.0"
+edition       = "2024"
+authors       = ["Jorge Andre Castro <georgeandrec@gmail.com>"]
+license       = "GPL-2.0-or-later"
+description   = "Dessins 2D no_std pour objets physiques (bras robotique, pendule, ressort-masse, boussole, engrenages) sur OLED SSD1306 128×64"
+repository    = "https://github.com/jorgeandrecastro/embassy-ssd1306-physics"
+documentation = "https://docs.rs/embassy-ssd1306-physics"
+readme        = "README.md"
+keywords      = ["embedded", "no-std", "oled", "ssd1306", "robotics"]
+categories    = ["embedded", "no-std", "graphics"]
+
+[dependencies]
+embassy-ssd1306-graphics = "0.1"
+embedded-hal-async       = "1.0"
+
+[profile.release]
+opt-level     = "z"
+lto           = true
+codegen-units = 1
+panic         = "abort"
+strip         = true
