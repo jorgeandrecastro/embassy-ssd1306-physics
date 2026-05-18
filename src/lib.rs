@@ -19,6 +19,7 @@
 //! | [`spring_mass`] | [`SpringMass`] | Système ressort-masse vertical               |
 //! | [`compass`]     | [`Compass`]    | Boussole (cadran + cardinaux + aiguille)     |
 //! | [`gear`]        | [`Gear`]       | Engrenage (dents + moyeu creux)              |
+//! | [`piston`]       | [`Piston`]      | Piston (cylindre + tige)                     |
 //!
 //! ## Patron sin/cos injecté
 //!
@@ -44,6 +45,8 @@ pub mod pendulum;
 pub mod spring_mass;
 pub mod compass;
 pub mod gear;
+pub mod piston;
+
 
 pub use robotic_arm::RoboticArm;
 pub use pendulum::Pendulum;
@@ -52,3 +55,4 @@ pub use compass::Compass;
 pub use gear::Gear;
 pub use gear::GearPair;
 pub use gear::GearTrain;
+pub use piston::Piston;

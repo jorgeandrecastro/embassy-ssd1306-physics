@@ -12,7 +12,7 @@ construite au-dessus de [`embassy-ssd1306-graphics`](https://crates.io/crates/em
 | Module          | Struct(s)               | Description                                      |
 |-----------------|-------------------------|--------------------------------------------------|
 | `robotic_arm`   | `RoboticArm`            | Bras robotique 2 segments (épaule + coude)       |
-| `pendulum`      | `Pendulum`              | Pendule simple (pivot + tige + masse)            |
+| `pendulum`      | `Pendulum`              | Pendule simple (encastrement + tige + masse)     |
 | `spring_mass`   | `SpringMass`            | Système ressort-masse vertical (zigzag + bloc)   |
 | `compass`       | `Compass`               | Boussole (cadran + cardinaux + aiguille)         |
 | `gear`          | `Gear`, `GearPair`, `GearTrain` | Engrenages simples, paires et trains     |
@@ -83,12 +83,44 @@ arm.draw(&mut gfx, 0.785, -0.524, true, trig::cos, trig::sin);
 
 ### Pendule
 
+Pendule simple : pivot fixe + tige + masse circulaire.  
+**L'angle est mesuré depuis la verticale descendante** (0 = repos, positif = penche à droite).
+
+**Rendus :** encastrement mural (rect + hachures) + tige + pivot (r=1) + masse (r=3).
+
+#### Constructeur par défaut
+
 ```rust
 use embassy_ssd1306_physics::Pendulum;
 use embedded_trig_f32 as trig;
 
+// Pivot à (64, 6), tige 28px, encastrement par défaut 16×5
 let pend = Pendulum::new(64, 6, 28);
-pend.draw(&mut gfx, 0.4, true, trig::cos, trig::sin); // ~23° à droite
+pend.draw(&mut gfx, 0.4, true, trig::cos, trig::sin);   // ~23° à droite
+pend.draw(&mut gfx, -0.4, true, trig::cos, trig::sin);  // ~23° à gauche
+```
+
+#### Encastrement personnalisé
+
+```rust
+use embassy_ssd1306_physics::Pendulum;
+use embedded_trig_f32 as trig;
+
+// Encastrement plus grand : 20×8 au lieu de 16×5
+let pend = Pendulum::with_wall(32, 10, 30, 20, 8);
+pend.draw(&mut gfx, 0.2, true, trig::cos, trig::sin);
+```
+
+#### Animation simple
+
+```rust
+let mut angle: f32 = 0.0;
+loop {
+    pend.erase(&mut gfx, angle, trig::cos, trig::sin);
+    angle += 0.05;  // incrémenter l'angle progressivement
+    pend.draw(&mut gfx, angle, true, trig::cos, trig::sin);
+    oled.flush().await.unwrap();
+}
 ```
 
 ### Ressort-masse
