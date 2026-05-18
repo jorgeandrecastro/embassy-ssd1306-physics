@@ -24,6 +24,7 @@ et ce projet respecte la [Gestion sémantique de version](https://semver.org/spe
   - Convention angulaire clarifiée : angles mesurés depuis la verticale montante
   - Méthodes de personnalisation : `with_wall()` (socle), `with_gripper()` (pince)
   - Exemples détaillés : constructeur, personnalisation, boucle d'animation
+  - Nouveautés : `Facing`(attention Left la pince pointe à droite et Right la pince pointe à gauche), `with_wall()`, `with_gripper()`
 
 ### Modifications
 

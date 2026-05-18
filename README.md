@@ -5,6 +5,8 @@
 Dessins 2D `no_std` d'objets physiques pour écrans OLED SSD1306 (128×64),  
 construite au-dessus de [`embassy-ssd1306-graphics`](https://crates.io/crates/embassy-ssd1306-graphics).
 
+Consultez les notes de version dans le [CHANGELOG.md](CHANGELOG.md) (version 0.2.0).
+
 ---
 
 ## Objets disponibles
@@ -139,7 +141,14 @@ Bras industriel 2D à deux segments avec pince pneumatique.
 
 **Architecture :** socle industriel (rect + hachures) + pivot d'épaule + segment 1 + segment 2 + effecteur + pince à mâchoires.
 
-**Facing** : énumération `Right` / `Left` qui contrôle l'orientation et le sens d'ouverture de la pince.
+**Facing** : énumération `Right` / `Left` qui contrôle l'orientation et le sens d'ouverture de la pince, attention Left la pince pointe a droite et Right la pince pointe a gauche .
+
+#### Nouveautés RoboticArm
+
+- `Facing` pour inverser facilement l'orientation du bras , attention Left la pince pointe a droite et Right la pince pointe a gauche .
+- `with_wall()` pour personnaliser le socle industriel
+- `with_gripper()` pour ajuster la taille de la pince
+- Convention angulaire clarifiée : angles mesurés depuis la verticale montante
 
 #### Constructeur par défaut
 
