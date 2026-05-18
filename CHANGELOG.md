@@ -7,7 +7,7 @@ et ce projet respecte la [Gestion sémantique de version](https://semver.org/spe
 
 ---
 
-## [0.2.0] — 2026-05-18
+## [0.3.0] — 2026-05-18
 
 ### Ajouts
 

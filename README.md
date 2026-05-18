@@ -5,7 +5,7 @@
 Dessins 2D `no_std` d'objets physiques pour écrans OLED SSD1306 (128×64),  
 construite au-dessus de [`embassy-ssd1306-graphics`](https://crates.io/crates/embassy-ssd1306-graphics).
 
-Consultez les notes de version dans le [CHANGELOG.md](CHANGELOG.md) (version 0.2.0).
+Consultez les notes de version dans le [CHANGELOG.md](CHANGELOG.md) (version 0.3.0).
 
 ---
 
@@ -30,7 +30,7 @@ Consultez les notes de version dans le [CHANGELOG.md](CHANGELOG.md) (version 0.2
 [dependencies]
 embassy-ssd1306          = "0.6"
 embassy-ssd1306-graphics  = "0.1"
-embassy-ssd1306-physics   = "0.2"
+embassy-ssd1306-physics   = "0.3"
 embedded-trig-f32         = "0.1"   
 embedded-hal-async        = "1.0"
 ```
