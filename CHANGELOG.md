@@ -18,6 +18,13 @@ et ce projet respecte la [Gestion sémantique de version](https://semver.org/spe
   - Fondation future pour moteur thermique / vilebrequin
   - Exemple : `Piston::new(64, 10, 20, 40)` avec `set_pos()` pour mouvement vertical
 
+- **Module `robotic_arm`** — Documentation et API enrichies
+  - Architecture complète : socle industriel, pivot d'épaule, 2 segments, effecteur, pince pneumatique
+  - Enum `Facing` pour contrôler orientation et sens d'ouverture (`Right` / `Left`)
+  - Convention angulaire clarifiée : angles mesurés depuis la verticale montante
+  - Méthodes de personnalisation : `with_wall()` (socle), `with_gripper()` (pince)
+  - Exemples détaillés : constructeur, personnalisation, boucle d'animation
+
 ### Modifications
 
 - **Documentation `pendulum`** : Clarté et complétude considérablement améliorées

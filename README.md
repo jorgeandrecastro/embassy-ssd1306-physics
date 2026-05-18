@@ -11,7 +11,7 @@ construite au-dessus de [`embassy-ssd1306-graphics`](https://crates.io/crates/em
 
 | Module          | Struct(s)               | Description                                      |
 |-----------------|-------------------------|--------------------------------------------------|
-| `robotic_arm`   | `RoboticArm`            | Bras robotique 2 segments (épaule + coude)       |
+| `robotic_arm`   | `RoboticArm`, `Facing`  | Bras industriel 2D (socle + pince pneumatique)   |
 | `pendulum`      | `Pendulum`              | Pendule simple (encastrement + tige + masse)     |
 | `spring_mass`   | `SpringMass`            | Système ressort-masse vertical (zigzag + bloc)   |
 | `compass`       | `Compass`               | Boussole (cadran + cardinaux + aiguille)         |
@@ -72,14 +72,62 @@ Aucun autre fichier à toucher.
 
 ### Bras robotique
 
+Bras industriel 2D à deux segments avec pince pneumatique.  
+**L'angle est mesuré depuis la verticale montante** (0 = droit vers le haut, positif = incliné selon `Facing`).
+
+**Architecture :** socle industriel (rect + hachures) + pivot d'épaule + segment 1 + segment 2 + effecteur + pince à mâchoires.
+
+**Facing** : énumération `Right` / `Left` qui contrôle l'orientation et le sens d'ouverture de la pince.
+
+#### Constructeur par défaut
+
 ```rust
 use embassy_ssd1306_physics::RoboticArm;
 use embedded_trig_f32 as trig;
 
-let arm = RoboticArm::new(20, 50, 28, 18);
-// Épaule à 45°, coude à -30° relatif
-arm.draw(&mut gfx, 0.785, -0.524, true, trig::cos, trig::sin);
+// Base à (64, 63), segment 1: 20px, segment 2: 18px
+let arm = RoboticArm::new(64, 63, 20, 18);
+
+// Épaule à 45°, coude à -30° relatif, pince fermée (0.0)
+arm.draw(&mut gfx, 0.785, -0.524, 0.0, Facing::Right, true, trig::cos, trig::sin);
+
+// Même bras à gauche
+arm.draw(&mut gfx, 0.785, -0.524, 0.0, Facing::Left, true, trig::cos, trig::sin);
 ```
+
+#### Socle et pince personnalisés
+
+```rust
+use embassy_ssd1306_physics::{RoboticArm, Facing};
+use embedded_trig_f32 as trig;
+
+let arm = RoboticArm::new(32, 60, 18, 16)
+    .with_wall(20, 6)           // socle plus grand : 20×6
+    .with_gripper(10, 2);       // pince : 10px long, 2px hauteur
+
+arm.draw(&mut gfx, 0.3, 0.4, 0.0, Facing::Right, true, trig::cos, trig::sin);
+```
+
+#### Animation simple
+
+```rust
+use embassy_ssd1306_physics::{RoboticArm, Facing};
+use embedded_trig_f32 as trig;
+
+let arm = RoboticArm::new(64, 63, 20, 18);
+let mut angle_shoulder: f32 = 0.0;
+let mut angle_elbow: f32 = 0.0;
+
+loop {
+    arm.erase(&mut gfx, angle_shoulder, angle_elbow, 0.0, Facing::Right, trig::cos, trig::sin);
+    
+    // Balancer l'épaule et le coude
+    angle_shoulder += 0.05;
+    angle_elbow -= 0.03;
+    
+    arm.draw(&mut gfx, angle_shoulder, angle_elbow, 0.0, Facing::Right, true, trig::cos, trig::sin);
+    oled.flush().await.unwrap();
+}
 
 ### Pendule
 

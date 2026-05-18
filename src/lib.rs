@@ -56,3 +56,4 @@ pub use gear::Gear;
 pub use gear::GearPair;
 pub use gear::GearTrain;
 pub use piston::Piston;
+pub use robotic_arm::Facing;
