@@ -13,10 +13,12 @@ construite au-dessus de [`embassy-ssd1306-graphics`](https://crates.io/crates/em
 |-----------------|-------------------------|--------------------------------------------------|
 | `robotic_arm`   | `RoboticArm`, `Facing`  | Bras industriel 2D (socle + pince pneumatique)   |
 | `pendulum`      | `Pendulum`              | Pendule simple (encastrement + tige + masse)     |
+| `piston`        | `Piston`                | Piston 2D mécanique (chambre + tige guidée)      |
 | `spring_mass`   | `SpringMass`            | Système ressort-masse vertical (zigzag + bloc)   |
 | `compass`       | `Compass`               | Boussole (cadran + cardinaux + aiguille)         |
 | `gear`          | `Gear`, `GearPair`, `GearTrain` | Engrenages simples, paires et trains     |
 | `draw_utils`    | *(interne)*             | Primitives partagées (segment, arc, disque…)     |
+
 
 ---
 
@@ -45,6 +47,65 @@ arm.draw(&mut gfx, 0.785, -0.524, true, trig::cos, trig::sin);
 
 ---
 
+## Convention de repère et angles
+
+### Repère écran
+
+```text
+(0,0) ──── X+
+  │
+  Y+   (Y croît vers le bas — convention écran standard)
+```
+
+### Conventions angulaires par objet
+
+#### `RoboticArm` — Angles depuis la verticale montante
+
+L'angle est mesuré **depuis la verticale montante** (axe −Y) :
+
+```text
+       0°
+       ↑
+−90° ←   → +90°
+```
+
+- `angle_shoulder` : orientation absolue du segment 1
+  - `0.0` → segment droit vers le haut
+  - positif → incliné vers le côté `Facing`
+- `angle_elbow` : rotation relative du segment 2 par rapport au segment 1
+  - `0.0` → segments alignés (bras tendu)
+  - positif → coude plié vers le côté `Facing`
+
+#### `Pendulum` — Angles depuis la verticale descendante
+
+L'angle est mesuré **depuis la verticale descendante** (axe +Y) :
+
+```text
+  −90° ← 0° → +90°
+         ↓
+```
+
+- `0.0` → pendule au repos (tige pend vers le bas)
+- positif → penche à droite
+- négatif → penche à gauche
+
+#### `Piston` — Position linéaire
+
+Le piston se déplace **verticalement** (axe Y) dans sa chambre :
+
+```text
+pos = 0     ← sommet (chambre fermée)
+  │
+  │ chambre
+  │
+pos = max   ← bas (piston complètement sortant)
+```
+
+- `pos ∈ [0, h − piston_h]` : position contrainte
+- `normalized() ∈ [0.0, 1.0]` : position normalisée (0 = haut, 1 = bas)
+
+---
+
 ## Structure des modules
 
 ```
@@ -53,6 +114,7 @@ src/
 ├── draw_utils.rs    ← segment, arc, disque, rect (partagés)
 ├── robotic_arm.rs   ← RoboticArm
 ├── pendulum.rs      ← Pendulum
+├── piston.rs        ← Piston
 ├── spring_mass.rs   ← SpringMass
 ├── compass.rs       ← Compass
 └── gear.rs          ← Gear · GearPair · GearTrain
@@ -197,6 +259,34 @@ let compass = Compass::new(112, 32, 14);
 compass.draw(&mut gfx, 0.785, true, trig::cos, trig::sin); // NE
 ```
 
+### Piston
+
+```rust
+use embassy_ssd1306_physics::Piston;
+
+let mut piston = Piston::new(64, 10, 20, 40);
+
+// Position au sommet (fermé)
+piston.set_pos(0);
+piston.draw(&mut gfx, 0.0, true, |_| 0.0, |_| 0.0);
+
+// Position au milieu
+piston.set_pos(20);
+piston.draw(&mut gfx, 0.0, true, |_| 0.0, |_| 0.0);
+
+// Animation simple : va-et-vient
+let max_pos = piston.h - piston.piston_h;
+let mut pos: i32 = 0;
+loop {
+    piston.erase(&mut gfx, 0.0, |_| 0.0, |_| 0.0);
+    pos = (pos + 1) % (max_pos * 2);
+    let actual_pos = if pos > max_pos { max_pos * 2 - pos } else { pos };
+    piston.set_pos(actual_pos);
+    piston.draw(&mut gfx, 0.0, true, |_| 0.0, |_| 0.0);
+    oled.flush().await.unwrap();
+}
+```
+
 ### Engrenage simple
 
 ```rust
@@ -316,13 +406,14 @@ La mise en phase est automatique : les dents se croisent proprement au point de 
 
 ## Convention des angles
 
-| Objet         | Référence 0              | Sens positif       |
-|---------------|--------------------------|--------------------|
-| `RoboticArm`  | Horizontal droit (X+)    | Horaire (vers Y+)  |
-| `Pendulum`    | Verticale (repos en bas) | Droite             |
-| `Compass`     | Nord (Y–)                | Horaire (Est)      |
-| `Gear`        | X+ horizontal            | Horaire            |
-| `SpringMass`  | Sans angle               | Extension vers Y+  |
+| Objet         | Référence 0°             | Sens positif       | Type       |
+|---------------|--------------------------|--------------------|------------|
+| `RoboticArm`  | Verticale montante (Y−)  | Vers `Facing`      | Angulaire  |
+| `Pendulum`    | Verticale descendante (Y+) | Droite           | Angulaire  |
+| `Piston`      | Sommet chambre (pos=0)   | Vers le bas (Y+)   | Linéaire   |
+| `Compass`     | Nord (Y−)                | Horaire (Est)      | Angulaire  |
+| `Gear`        | X+ horizontal            | Horaire            | Angulaire  |
+| `SpringMass`  | —                        | Extension vers Y+  | Linéaire   |
 
 ---
 

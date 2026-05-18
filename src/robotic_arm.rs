@@ -67,10 +67,10 @@
 //!
 //! Modèle purement géométrique (pas d'inertie, pas de dynamique).
 //! Conçu pour rendu temps réel embarqué sur afficheur SSD1306 128×64.
-
 use crate::draw_utils::{filled_disk, filled_rect, segment, thick_segment};
 use embassy_ssd1306_graphics::Graphics;
 use embedded_hal_async::i2c::I2c;
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Facing
@@ -102,7 +102,7 @@ impl Facing {
     /// - `Right` → `+1.0` (X croît vers la droite)
     /// - `Left`  → `−1.0` (X décroît vers la gauche)
     #[inline]
-    fn sign(self) -> f32 {
+    pub fn sign(self) -> f32 {
         match self {
             Facing::Right => 1.0,
             Facing::Left => -1.0,

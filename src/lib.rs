@@ -14,12 +14,12 @@
 //!
 //! | Module          | Struct         | Description                                  |
 //! |-----------------|----------------|----------------------------------------------|
-//! | [`robotic_arm`] | [`RoboticArm`] | Bras robotique 2 segments (épaule + coude)   |
-//! | [`pendulum`]    | [`Pendulum`]   | Pendule simple (pivot + tige + masse)        |
+//! | [`robotic_arm`] | [`RoboticArm`] | Bras industriel 2D (socle + pince pneumatique)  |
+//! | [`pendulum`]    | [`Pendulum`]   | Pendule simple (encastrement + tige + masse) |
 //! | [`spring_mass`] | [`SpringMass`] | Système ressort-masse vertical               |
 //! | [`compass`]     | [`Compass`]    | Boussole (cadran + cardinaux + aiguille)     |
 //! | [`gear`]        | [`Gear`]       | Engrenage (dents + moyeu creux)              |
-//! | [`piston`]       | [`Piston`]      | Piston (cylindre + tige)                     |
+//! | [`piston`]       | [`Piston`]      | Piston 2D mécanique (chambre + tige guidée)                    |
 //!
 //! ## Patron sin/cos injecté
 //!
