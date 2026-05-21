@@ -7,6 +7,16 @@ et ce projet respecte la [Gestion sémantique de version](https://semver.org/spe
 
 ---
 
+## [0.3.1] — 2026-05-21
+
+### Corrections
+
+- **Module `robotic_arm`** : Correction de l'enum `Facing`
+  - Orientation corrigée : `Right` / `Left` / `RightFlipped` / `LeftFlipped`
+  - Convention : droite-droite-gauche-gauche pour l'orientation correcte
+
+---
+
 ## [0.3.0] — 2026-05-18
 
 ### Ajouts

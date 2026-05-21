@@ -58,7 +58,7 @@
 //!   - `0.0`  → segments alignés (bras tendu)
 //!   - positif → coude plié vers la droite en espace local
 //!
-//! ## Modèle mathématique — Facing comme transformation globale
+//! ## Modèle mathématique : Facing comme transformation globale
 //!
 //! Toutes les directions sont d'abord calculées en **espace local** (Facing = Right),
 //! puis transformées par [`Transform2D`] avant d'être converties en pixels.
@@ -66,8 +66,8 @@
 //! ```text
 //! espace local  →  Transform2D::apply()  →  espace écran
 //!
-//! Right : identité        (sx=+1)
-//! Left  : miroir sur X    (sx=−1)
+//! Right : miroir sur X    (sx=−1)
+//! Left  : identité        (sx=+1)
 //! ```
 //!
 //! Le vecteur perpendiculaire (`perp`) est dérivé **après** transformation,
@@ -104,8 +104,8 @@ use embedded_hal_async::i2c::I2c;
 /// | shy  sy | × | vy |
 /// ```
 ///
-/// Pour [`Facing::Right`] : identité `(sx=1, sy=1, shx=0, shy=0)`.
-/// Pour [`Facing::Left`]  : miroir X  `(sx=−1, sy=1, shx=0, shy=0)`.
+/// Pour [`Facing::Right`] : miroir X `(sx=−1, sy=1, shx=0, shy=0)`.
+/// Pour [`Facing::Left`]  : identité `(sx=1, sy=1, shx=0, shy=0)`.
 ///
 /// # Pourquoi pas juste `sign` ?
 ///
@@ -128,13 +128,13 @@ use embedded_hal_async::i2c::I2c;
 }
 
 impl Transform2D {
-    /// Transformation identité (Facing::Right).
+    /// Transformation identité (Facing::Left).
     #[inline]
     pub const fn identity() -> Self {
         Self { sx: 1.0, sy: 1.0, shx: 0.0, shy: 0.0 }
     }
 
-    /// Miroir sur l'axe X (Facing::Left).
+    /// Miroir sur l'axe X (Facing::Right).
     ///
     /// Inverse la composante X de tout vecteur transformé,
     /// ce qui reflète le bras entier (segments + pince) de façon homogène.
@@ -192,7 +192,7 @@ impl Transform2D {
 // Facing
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Orientation du bras — détermine la transformation globale appliquée au rendu.
+/// Orientation du bras : détermine la transformation globale appliquée au rendu.
 ///
 /// [`Facing`] n'est plus un simple `sign()` sur X : il produit une [`Transform2D`]
 /// complète qui garantit la cohérence géométrique de tous les vecteurs
@@ -207,22 +207,22 @@ impl Transform2D {
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Facing {
-    /// Bras orienté vers la droite — transformation identité.
+    /// Bras orienté vers la droite — miroir sur l'axe X.
     Right,
-    /// Bras orienté vers la gauche — miroir sur l'axe X.
+    /// Bras orienté vers la gauche — transformation identité.
     Left,
 }
 
+
 impl Facing {
+
     /// Retourne la transformation 2D associée à cette orientation.
-    ///
-    /// - `Right` → [`Transform2D::identity`]
-    /// - `Left`  → [`Transform2D::mirror_x`]
+    /// `Right` → [`Transform2D::mirror_x`], `Left` → [`Transform2D::identity`].
     #[inline]
     pub fn transform(self) -> Transform2D {
         match self {
-            Facing::Right => Transform2D::identity(),
-            Facing::Left  => Transform2D::mirror_x(),
+            Facing::Right => Transform2D::mirror_x(),
+            Facing::Left  => Transform2D::identity(),
         }
     }
 }
@@ -268,7 +268,7 @@ pub struct RoboticArm {
     /// Centre horizontal du socle et de l'épaule (pixels).
     pub base_x: i32,
 
-    /// Niveau du sol — bas du socle industriel (pixels, Y croît vers le bas).
+    /// Niveau du sol : bas du socle industriel (pixels, Y croît vers le bas).
     pub base_y: i32,
 
     /// Longueur du segment 1 : épaule → coude (pixels).
@@ -329,7 +329,7 @@ impl RoboticArm {
     /// # Paramètres
     ///
     /// - `wall_w` : largeur totale du socle (px)
-    /// - `wall_h` : hauteur totale du socle (px) — s'étend vers le haut depuis `base_y`
+    /// - `wall_h` : hauteur totale du socle (px) : s'étend vers le haut depuis `base_y`
     pub fn with_wall(mut self, wall_w: i32, wall_h: i32) -> Self {
         self.wall_w = wall_w;
         self.wall_h = wall_h;

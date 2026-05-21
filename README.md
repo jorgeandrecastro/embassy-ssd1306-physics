@@ -5,7 +5,7 @@
 Dessins 2D `no_std` d'objets physiques pour écrans OLED SSD1306 (128×64),  
 construite au-dessus de [`embassy-ssd1306-graphics`](https://crates.io/crates/embassy-ssd1306-graphics).
 
-Consultez les notes de version dans le [CHANGELOG.md](CHANGELOG.md) (version 0.3.0).
+Consultez les notes de version dans le [CHANGELOG.md](CHANGELOG.md) (version 0.3.1).
 
 ---
 
@@ -40,7 +40,7 @@ embedded-hal-async        = "1.0"
 ## Patron sin/cos injecté
 
 Chaque `draw()` accepte `cos_fn: fn(f32) -> f32` et `sin_fn: fn(f32) -> f32`.  
-Passez vos fonctions trig `no_std` favorites — zéro couplage, zéro overhead :
+Passez vos fonctions trig `no_std` favorites : zéro couplage, zéro overhead :
 
 ```rust
 use embedded_trig_f32 as trig;
@@ -61,7 +61,7 @@ arm.draw(&mut gfx, 0.785, -0.524, true, trig::cos, trig::sin);
 
 ### Conventions angulaires par objet
 
-#### `RoboticArm` — Angles depuis la verticale montante
+#### `RoboticArm` : Angles depuis la verticale montante
 
 L'angle est mesuré **depuis la verticale montante** (axe −Y) :
 
@@ -78,7 +78,7 @@ L'angle est mesuré **depuis la verticale montante** (axe −Y) :
   - `0.0` → segments alignés (bras tendu)
   - positif → coude plié vers le côté `Facing`
 
-#### `Pendulum` — Angles depuis la verticale descendante
+#### `Pendulum` : Angles depuis la verticale descendante
 
 L'angle est mesuré **depuis la verticale descendante** (axe +Y) :
 
@@ -91,7 +91,7 @@ L'angle est mesuré **depuis la verticale descendante** (axe +Y) :
 - positif → penche à droite
 - négatif → penche à gauche
 
-#### `Piston` — Position linéaire
+#### `Piston` : Position linéaire
 
 Le piston se déplace **verticalement** (axe Y) dans sa chambre :
 
@@ -141,11 +141,11 @@ Bras industriel 2D à deux segments avec pince pneumatique.
 
 **Architecture :** socle industriel (rect + hachures) + pivot d'épaule + segment 1 + segment 2 + effecteur + pince à mâchoires.
 
-**Facing** : énumération `Right` / `Left` qui contrôle l'orientation et le sens d'ouverture de la pince, attention Left la pince pointe a droite et Right la pince pointe a gauche .
+**Facing** : énumération `Right` / `Left` qui contrôle l'orientation et le sens d'ouverture de la pince. Dans l'implémentation actuelle, `Facing::Right` applique un miroir horizontal et `Facing::Left` conserve l'orientation locale.
 
 #### Nouveautés RoboticArm
 
-- `Facing` pour inverser facilement l'orientation du bras , attention Left la pince pointe a droite et Right la pince pointe a gauche .
+- `Facing` pour inverser facilement l'orientation du bras .
 - `with_wall()` pour personnaliser le socle industriel
 - `with_gripper()` pour ajuster la taille de la pince
 - Convention angulaire clarifiée : angles mesurés depuis la verticale montante
